@@ -20,8 +20,13 @@ if (!function_exists('formatJamPelayanan')) {
             $segment = trim($segment);
             if (empty($segment)) continue;
 
+            // Enforce valid UTF-8 to prevent preg_* /u modifiers from returning NULL
+            // This replaces invalid byte sequences with standard replacements.
+            $segment = mb_convert_encoding($segment, 'UTF-8', 'UTF-8');
+
             // Replace any hyphen/dash between days with en dash
-            $segment = preg_replace('/([a-zA-Z]+)\s*[-–—]\s*([a-zA-Z]+)/u', '$1–$2', $segment);
+            $new_seg = preg_replace('/([a-zA-Z]+)\s*[-–—]\s*([a-zA-Z]+)/u', '$1–$2', $segment);
+            if ($new_seg !== null) $segment = $new_seg;
 
             // Replace short names (case insensitive, bounded by non-letters)
             $map = [
@@ -36,7 +41,8 @@ if (!function_exists('formatJamPelayanan')) {
             ];
 
             foreach ($map as $short => $full) {
-                $segment = preg_replace('/(?<![a-zA-Z])' . $short . '(?![a-zA-Z])/iu', $full, $segment);
+                $new_seg = preg_replace('/(?<![a-zA-Z])' . $short . '(?![a-zA-Z])/iu', $full, $segment);
+                if ($new_seg !== null) $segment = $new_seg;
             }
 
             // Insert colon if there is a day or day range followed by time
@@ -44,11 +50,13 @@ if (!function_exists('formatJamPelayanan')) {
                 $day_part = $matches[1];
                 $time_part = trim($matches[2]);
                 // Replace hyphen in time with en dash if it's between numbers
-                $time_part = preg_replace('/(\d[\d\.]*)\s*[-–—]\s*([\d\.]+)/u', '$1–$2', $time_part);
+                $new_time = preg_replace('/(\d[\d\.]*)\s*[-–—]\s*([\d\.]+)/u', '$1–$2', $time_part);
+                if ($new_time !== null) $time_part = $new_time;
                 $segment = $day_part . ': ' . $time_part;
             } else if (preg_match('/^[\d\.\:\-\/–—\s]+$/u', $segment)) {
                 // If it's just time
-                $segment = preg_replace('/(\d[\d\.]*)\s*[-–—]\s*([\d\.]+)/u', '$1–$2', $segment);
+                $new_seg = preg_replace('/(\d[\d\.]*)\s*[-–—]\s*([\d\.]+)/u', '$1–$2', $segment);
+                if ($new_seg !== null) $segment = $new_seg;
                 
                 // As per user request, if it's missing the day prefix, assume "Senin-Kamis"
                 $segment = 'Senin–Kamis: ' . trim($segment);

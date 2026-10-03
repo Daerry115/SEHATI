@@ -102,8 +102,27 @@ function renderFasilitasList($fasilitas) {
     
     foreach ($fasilitas as $f) {
         $isRS = strtolower($f['kategori']) == 'rumah sakit';
-        $detailsJson = htmlspecialchars(json_encode($f), ENT_QUOTES, 'UTF-8');
         
+        // Enforce valid UTF-8 to prevent json_encode from failing on invalid characters (like CP1252 en-dash)
+        $safe_f = [];
+        foreach($f as $k => $v) {
+            if (is_string($v)) {
+                $safe_f[$k] = mb_convert_encoding($v, 'UTF-8', 'UTF-8');
+            } else if (is_array($v)) {
+                $safe_v = [];
+                foreach($v as $vk => $vv) {
+                    $safe_v[$vk] = is_string($vv) ? mb_convert_encoding($vv, 'UTF-8', 'UTF-8') : $vv;
+                }
+                $safe_f[$k] = $safe_v;
+            } else {
+                $safe_f[$k] = $v;
+            }
+        }
+        // Fallback flag if PHP >= 7.2
+        $encode_flags = defined('JSON_INVALID_UTF8_SUBSTITUTE') ? JSON_INVALID_UTF8_SUBSTITUTE : 0;
+        $encoded_json = json_encode($safe_f, $encode_flags);
+        $detailsJson = htmlspecialchars($encoded_json ? $encoded_json : '{}', ENT_QUOTES, 'UTF-8');
+
         $rating = isset($f['rating']) && $f['rating'] ? $f['rating'] : '4.5';
         $deskripsi = isset($f['deskripsi']) && $f['deskripsi'] ? $f['deskripsi'] : 'Pelayanan kesehatan tingkat pertama dengan layanan umum, ibu dan anak, imunisasi, serta program kesehatan masyarakat.';
         if ($isRS && (!isset($f['deskripsi']) || !$f['deskripsi'])) {

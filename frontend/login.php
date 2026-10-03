@@ -55,7 +55,7 @@
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <label class="block text-sm font-semibold text-slate-700">Password</label>
-                    <a href="#" class="text-xs font-semibold text-primary hover:underline">Lupa Password?</a>
+                    <a href="forgot_password.php" class="text-xs font-semibold text-primary hover:underline">Lupa Password?</a>
                 </div>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
