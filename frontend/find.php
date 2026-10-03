@@ -107,11 +107,11 @@ function renderFasilitasList($fasilitas) {
         $safe_f = [];
         foreach($f as $k => $v) {
             if (is_string($v)) {
-                $safe_f[$k] = mb_convert_encoding($v, 'UTF-8', 'UTF-8');
+                $safe_f[$k] = !mb_check_encoding($v, 'UTF-8') ? mb_convert_encoding($v, 'UTF-8', 'Windows-1252') : $v;
             } else if (is_array($v)) {
                 $safe_v = [];
                 foreach($v as $vk => $vv) {
-                    $safe_v[$vk] = is_string($vv) ? mb_convert_encoding($vv, 'UTF-8', 'UTF-8') : $vv;
+                    $safe_v[$vk] = is_string($vv) && !mb_check_encoding($vv, 'UTF-8') ? mb_convert_encoding($vv, 'UTF-8', 'Windows-1252') : $vv;
                 }
                 $safe_f[$k] = $safe_v;
             } else {

@@ -21,8 +21,10 @@ if (!function_exists('formatJamPelayanan')) {
             if (empty($segment)) continue;
 
             // Enforce valid UTF-8 to prevent preg_* /u modifiers from returning NULL
-            // This replaces invalid byte sequences with standard replacements.
-            $segment = mb_convert_encoding($segment, 'UTF-8', 'UTF-8');
+            // If it's invalid UTF-8, it's likely Windows-1252 from the DB, so we convert it safely.
+            if (!mb_check_encoding($segment, 'UTF-8')) {
+                $segment = mb_convert_encoding($segment, 'UTF-8', 'Windows-1252');
+            }
 
             // Replace any hyphen/dash between days with en dash
             $new_seg = preg_replace('/([a-zA-Z]+)\s*[-–—]\s*([a-zA-Z]+)/u', '$1–$2', $segment);

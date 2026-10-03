@@ -38,6 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $res = $stmt->get_result();
     
+    // Check if the requested time is in the past
+    $now = new DateTime();
+    $today_str = $now->format('Y-m-d');
+    if ($date === $today_str && $time <= $now->format('H:i:s')) {
+        header("Content-Type: application/json");
+        echo json_encode(['status' => 'error', 'message' => 'Waktu kunjungan ini sudah terlewat. Silakan pilih waktu yang lain.']);
+        exit;
+    }
+    
     if ($res->num_rows === 0) {
         header("Content-Type: application/json");
         echo json_encode(['status' => 'error', 'message' => 'Data pasien tidak ditemukan']);

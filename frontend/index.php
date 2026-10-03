@@ -243,7 +243,7 @@ if (isset($_SESSION['user_id'])) {
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-[#413074] text-lg"></i>
                 </div>
-                <input type="text" name="query" placeholder="Cari layanan, poli, atau fasilitas kesehatan..." class="block w-full pl-12 pr-12 py-4 bg-white border border-slate-200 rounded-2xl text-slate-700 focus:outline-none focus:border-[#A57BD7] focus:ring-1 focus:ring-[#A57BD7] shadow-sm transition-colors placeholder-slate-400">
+                <input type="text" name="q" placeholder="Cari layanan, poli, atau fasilitas kesehatan..." class="block w-full pl-12 pr-12 py-4 bg-white border border-slate-200 rounded-2xl text-slate-700 focus:outline-none focus:border-[#A57BD7] focus:ring-1 focus:ring-[#A57BD7] shadow-sm transition-colors placeholder-slate-400">
                 <button type="submit" class="absolute inset-y-0 right-2 my-auto h-10 w-10 bg-[#413074] text-white rounded-xl flex items-center justify-center hover:bg-[#A57BD7] transition-colors">
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>

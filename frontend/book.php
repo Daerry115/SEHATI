@@ -144,13 +144,25 @@ for ($i = 0; $i <= 30; $i++) {
     $total_sisa = 0;
     $has_schedule = false;
     
+    $now = new DateTime();
+    $today_str = $now->format('Y-m-d');
+    
     // Check if faskes is actually open on this day
     if (!in_array($day_name, $open_days_list)) {
         $status = 'NO_SCHEDULE';
         $status_text = 'Tutup';
     } else {
+        $slots_existed = false;
+        
         foreach ($slots as $slot) {
             if ($slot['tanggal'] === $d_str) {
+                $slots_existed = true;
+                
+                // If it's today, skip slots that have already started
+                if ($d_str === $today_str && $slot['waktu_mulai'] <= $now->format('H:i:s')) {
+                    continue;
+                }
+                
                 $has_schedule = true;
                 $terdaftar = isset($pendaftar[$d_str][$slot['waktu_mulai']]) ? $pendaftar[$d_str][$slot['waktu_mulai']] : 0;
                 $sisa = max(0, $slot['kuota'] - $terdaftar);
@@ -167,7 +179,11 @@ for ($i = 0; $i <= 30; $i++) {
         }
         
         $status = 'NO_SCHEDULE';
-        $status_text = 'Tidak ada jadwal';
+        if ($slots_existed && !$has_schedule) {
+            $status_text = 'Waktu terlewat';
+        } else {
+            $status_text = 'Tidak ada jadwal';
+        }
         
         if ($has_schedule) {
             if ($total_sisa >= 10) {
