@@ -6,6 +6,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 require_once '../config/database.php';
+require_once '../config/helpers.php';
 $user_id = $_SESSION["user_id"];
 
 // Fetch Faskes & Poli data
@@ -30,7 +31,7 @@ if ($faskes_id > 0) {
         
         // Parsing " | Layanan 24 Jam: "
         $parts = explode(" | Layanan 24 Jam: ", $raw_jam);
-        $jam_pelayanan_text = $parts[0];
+        $jam_pelayanan_text = formatJamPelayanan($parts[0]);
         if(isset($parts[1])) {
             $layanan_24_jam = $parts[1];
         }
@@ -100,17 +101,17 @@ if ($poli_id > 0) {
 }
 
 // ==========================================
-// AUTO LOAD 7-DAY AVAILABILITY
+// AUTO LOAD 30-DAY AVAILABILITY
 // ==========================================
 $availability_data = [];
 $start_date = new DateTime(); // Today
 $end_date = clone $start_date;
-$end_date->modify('+6 days');
+$end_date->modify('+30 days');
 
 $start_str = $start_date->format('Y-m-d');
 $end_str = $end_date->format('Y-m-d');
 
-// 1. Fetch all schedule slots for the next 7 days
+// 1. Fetch all schedule slots for the next 30 days
 $slots = [];
 $stmt = $conn->prepare("SELECT * FROM jadwal_poli WHERE faskes_id = ? AND poli_id = ? AND tanggal BETWEEN ? AND ? ORDER BY tanggal ASC, waktu_mulai ASC");
 $stmt->bind_param("iiss", $faskes_id, $poli_id, $start_str, $end_str);
@@ -130,9 +131,11 @@ while ($row = $res2->fetch_assoc()) {
     $pendaftar[$row['tanggal_kunjungan']][$row['waktu_kunjungan']] = $row['cnt'];
 }
 
-// 3. Build the availability array (7 days)
+// 3. Build the availability array (30 days)
 $current_date = clone $start_date;
-for ($i = 0; $i < 7; $i++) {
+$open_days_list = isset($raw_jam) ? getOpenDays($raw_jam) : ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+for ($i = 0; $i <= 30; $i++) {
     $d_str = $current_date->format('Y-m-d');
     $day_name = array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu')[$current_date->format('w')];
     $date_formatted = $current_date->format('d M');
@@ -141,36 +144,42 @@ for ($i = 0; $i < 7; $i++) {
     $total_sisa = 0;
     $has_schedule = false;
     
-    foreach ($slots as $slot) {
-        if ($slot['tanggal'] === $d_str) {
-            $has_schedule = true;
-            $terdaftar = isset($pendaftar[$d_str][$slot['waktu_mulai']]) ? $pendaftar[$d_str][$slot['waktu_mulai']] : 0;
-            $sisa = max(0, $slot['kuota'] - $terdaftar);
-            
-            $total_sisa += $sisa;
-            $day_slots[] = [
-                'waktu_mulai' => date('H:i', strtotime($slot['waktu_mulai'])),
-                'waktu_selesai' => date('H:i', strtotime($slot['waktu_selesai'])),
-                'kuota' => $slot['kuota'],
-                'terdaftar' => $terdaftar,
-                'sisa' => $sisa
-            ];
+    // Check if faskes is actually open on this day
+    if (!in_array($day_name, $open_days_list)) {
+        $status = 'NO_SCHEDULE';
+        $status_text = 'Tutup';
+    } else {
+        foreach ($slots as $slot) {
+            if ($slot['tanggal'] === $d_str) {
+                $has_schedule = true;
+                $terdaftar = isset($pendaftar[$d_str][$slot['waktu_mulai']]) ? $pendaftar[$d_str][$slot['waktu_mulai']] : 0;
+                $sisa = max(0, $slot['kuota'] - $terdaftar);
+                
+                $total_sisa += $sisa;
+                $day_slots[] = [
+                    'waktu_mulai' => date('H:i', strtotime($slot['waktu_mulai'])),
+                    'waktu_selesai' => date('H:i', strtotime($slot['waktu_selesai'])),
+                    'kuota' => $slot['kuota'],
+                    'terdaftar' => $terdaftar,
+                    'sisa' => $sisa
+                ];
+            }
         }
-    }
-    
-    $status = 'NO_SCHEDULE';
-    $status_text = 'Tidak ada jadwal';
-    
-    if ($has_schedule) {
-        if ($total_sisa >= 10) {
-            $status = 'AVAILABLE';
-            $status_text = $total_sisa . ' kuota tersedia';
-        } else if ($total_sisa > 0) {
-            $status = 'LIMITED';
-            $status_text = $total_sisa . ' kuota tersisa';
-        } else {
-            $status = 'FULL';
-            $status_text = 'Antrean penuh';
+        
+        $status = 'NO_SCHEDULE';
+        $status_text = 'Tidak ada jadwal';
+        
+        if ($has_schedule) {
+            if ($total_sisa >= 10) {
+                $status = 'AVAILABLE';
+                $status_text = $total_sisa . ' kuota tersedia';
+            } else if ($total_sisa > 0) {
+                $status = 'LIMITED';
+                $status_text = $total_sisa . ' kuota tersisa';
+            } else {
+                $status = 'FULL';
+                $status_text = 'Antrean penuh';
+            }
         }
     }
     
@@ -279,7 +288,10 @@ if(empty($patients)) {
                     </div>
                     <div>
                         <h3 id="faskesNameText"><?php echo htmlspecialchars($faskes_nama); ?></h3>
-                        <p id="poliNameText"><?php echo htmlspecialchars($poli_nama); ?> • <?php echo htmlspecialchars($jam_pelayanan_text); ?></p>
+                        <p id="poliNameText" style="margin-bottom: 4px; font-weight: 500; color: #475569;"><?php echo htmlspecialchars($poli_nama); ?></p>
+                        <div id="jamPelayananText" style="font-size: 0.85rem; color: #64748b; line-height: 1.4;">
+                            <?php echo $jam_pelayanan_text; ?>
+                        </div>
                         <?php if($layanan_24_jam !== ""): ?>
                             <p style="font-size:0.75rem; color:#10b981; margin-top:4px; font-weight:600;"><i class="fa-solid fa-clock"></i> 24 Jam: <?php echo htmlspecialchars($layanan_24_jam); ?></p>
                         <?php endif; ?>

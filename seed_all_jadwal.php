@@ -30,7 +30,7 @@ echo "Ditemukan " . count($combinations) . " kombinasi layanan faskes.\n";
 
 $today = new DateTime();
 $dates = [];
-for ($i = 0; $i < 7; $i++) {
+for ($i = 0; $i < 60; $i++) {
     $dates[] = $today->format('Y-m-d');
     $today->modify('+1 day');
 }

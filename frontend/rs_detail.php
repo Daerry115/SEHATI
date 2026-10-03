@@ -174,9 +174,9 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                 <div class="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
                 
                 <!-- Back Button -->
-                <button onclick="history.back()" class="absolute top-6 left-6 md:left-12 z-20 w-11 h-11 bg-white/80 backdrop-blur border border-slate-200 text-slate-700 flex items-center justify-center rounded-xl shadow-sm hover:bg-white hover:text-primary transition-all group">
+                <a href="find.php" class="absolute top-6 left-6 md:left-12 z-20 w-11 h-11 bg-white/80 backdrop-blur border border-slate-200 text-slate-700 flex items-center justify-center rounded-xl shadow-sm hover:bg-white hover:text-primary transition-all group">
                     <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
-                </button>
+                </a>
                 
 
 
@@ -389,7 +389,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                                         </button>
                                         <div id="<?php echo $accId; ?>" class="hidden px-5 pb-6 pt-3 border-t border-slate-100">
                                             <div class="mt-2 mb-6">
-                                                <button onclick='showDetail(event, <?php echo $json_data; ?>)' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
+                                                <button data-faskes='<?php echo $json_data; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
                                                     <i class="fa-solid fa-calendar-plus"></i> Daftar Berobat
                                                 </button>
                                             </div>
@@ -615,7 +615,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                                 </button>
                                 <div id="<?php echo $accId; ?>" class="hidden px-5 pb-6 pt-3 border-t border-slate-100">
                                     <div class="mt-2 mb-6">
-                                        <button onclick='showDetail(event, <?php echo $json_data; ?>)' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
+                                        <button data-faskes='<?php echo $json_data; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
                                             <i class="fa-solid fa-calendar-plus"></i> Daftar Berobat
                                         </button>
                                     </div>
@@ -749,7 +749,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                                     </button>
                                     <div id="<?php echo $accId; ?>" class="hidden px-5 pb-6 pt-3 border-t border-slate-100">
                                         <div class="mt-2 mb-6">
-                                            <button onclick='showDetail(event, <?php echo $json_data; ?>)' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
+                                            <button data-faskes='<?php echo $json_data; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-6 py-2.5 bg-primary hover:bg-primaryDark text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-2">
                                                 <i class="fa-solid fa-calendar-plus"></i> Daftar Berobat
                                             </button>
                                         </div>
@@ -865,7 +865,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
 
                 <div class="flex justify-end mt-12 mb-10">
                     <!-- Generic register button for fallback, wait we don't really need this if each accordion has one, but it's good to keep the original content -->
-                    <button onclick='showDetail(event, <?php echo $detailsJson; ?>)' class="px-8 py-3 bg-primary hover:bg-primaryDark text-white font-bold text-base rounded-xl transition-colors shadow-md hidden">
+                    <button data-faskes='<?php echo $detailsJson; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-8 py-3 bg-primary hover:bg-primaryDark text-white font-bold text-base rounded-xl transition-colors shadow-md hidden">
                         Daftar Berobat
                     </button>
                 </div>
@@ -959,7 +959,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                 </div>
 
                 <div class="flex justify-end mt-12 mb-10">
-                    <button onclick='showDetail(event, <?php echo $detailsJson; ?>)' class="px-8 py-3 bg-primary hover:bg-primaryDark text-white font-bold text-base rounded-xl transition-colors shadow-md">
+                    <button data-faskes='<?php echo $detailsJson; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-8 py-3 bg-primary hover:bg-primaryDark text-white font-bold text-base rounded-xl transition-colors shadow-md">
                         Daftar Berobat
                     </button>
                 </div>
@@ -1510,7 +1510,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                 </div>
                 
                 <div class="flex justify-end mt-12 mb-10">
-                    <button onclick='showDetail(event, <?php echo $detailsJson; ?>)' class="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-base rounded-xl transition-colors shadow-md">
+                    <button data-faskes='<?php echo $detailsJson; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-base rounded-xl transition-colors shadow-md">
                         Telepon Darurat (112)
                     </button>
                 </div>
@@ -1602,7 +1602,7 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
                 </div>
 
                 <div class="flex justify-end mt-12 mb-10">
-                    <button onclick='showDetail(event, <?php echo $detailsJson; ?>)' class="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-base rounded-xl transition-colors shadow-md">
+                    <button data-faskes='<?php echo $detailsJson; ?>' onclick='showDetail(event, JSON.parse(this.dataset.faskes))' class="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-base rounded-xl transition-colors shadow-md">
                         Telepon Darurat (112)
                     </button>
                 </div>

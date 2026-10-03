@@ -1,6 +1,7 @@
 <?php
 if(session_status() === PHP_SESSION_NONE) session_start();
 require_once '../config/database.php';
+require_once '../config/helpers.php';
 
 $faskes_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($faskes_id === 0) {
@@ -344,7 +345,7 @@ $mockPuskesmas = [
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Jam Pelayanan</p>
-                            <p class="font-semibold text-slate-800"><?php echo htmlspecialchars($faskes['jam_pelayanan'] ? $faskes['jam_pelayanan'] : '-'); ?></p>
+                            <p class="font-semibold text-slate-800"><?php echo $faskes['jam_pelayanan'] ? formatJamPelayanan($faskes['jam_pelayanan']) : '-'; ?></p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Nomor Telepon/Kontak</p>

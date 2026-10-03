@@ -1,6 +1,7 @@
 <?php
 if(session_status() === PHP_SESSION_NONE) session_start();
 require_once '../config/database.php'; 
+require_once '../config/helpers.php';
 
 // Parameter Pencarian
 $q = isset($_GET['q']) ? $_GET['q'] : '';
@@ -74,6 +75,8 @@ while ($row = $result->fetch_assoc()) {
         $polis[] = $p['nama_poli'];
     }
     $row['layanan'] = $polis;
+    $row['jam_pelayanan'] = $row['jam_pelayanan'] ? formatJamPelayanan($row['jam_pelayanan']) : '-';
+    
     if ($lat !== null && $lng !== null && $row['latitude'] !== null && $row['longitude'] !== null) {
         $row['distance_km'] = haversineGreatCircleDistance($lat, $lng, $row['latitude'], $row['longitude']);
     } else {
@@ -157,7 +160,7 @@ function renderFasilitasList($fasilitas) {
         // Buttons
         echo '  <div class="flex gap-2 mt-auto pt-4 border-t border-slate-100">';
         echo '      <button class="flex-1 py-2.5 px-3 bg-[#413074] text-white text-xs font-bold rounded-xl hover:bg-[#A57BD7] transition-colors text-center shadow-sm" onclick="event.stopPropagation(); window.location.href=\''.$detailUrl.'\'">Lihat Detail</button>';
-        echo '      <button class="flex-1 py-2.5 px-3 bg-white border border-[#A57BD7] text-[#413074] text-xs font-bold rounded-xl hover:bg-[#F6F9F9] hover:text-[#A57BD7] transition-colors text-center" onclick="event.stopPropagation(); showDetail(event, '.$detailsJson.')">Daftar Berobat</button>';
+        echo '      <button class="flex-1 py-2.5 px-3 bg-white border border-[#A57BD7] text-[#413074] text-xs font-bold rounded-xl hover:bg-[#F6F9F9] hover:text-[#A57BD7] transition-colors text-center" data-faskes="'.$detailsJson.'" onclick="event.stopPropagation(); showDetail(event, JSON.parse(this.dataset.faskes))">Daftar Berobat</button>';
         echo '  </div>';
         
         echo '</div>'; // End Content
@@ -566,7 +569,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
             
             document.getElementById('modalAddress').textContent = data.alamat || '-';
             document.getElementById('modalRegion').textContent = data.wilayah || '-';
-            document.getElementById('modalHours').textContent = data.jam_pelayanan || '-';
+            document.getElementById('modalHours').innerHTML = data.jam_pelayanan || '-';
             document.getElementById('modalPhone').textContent = data.telepon || '-';
             
             const servicesContainer = document.getElementById('modalServices');
