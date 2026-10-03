@@ -2090,26 +2090,25 @@ $imageUrl = isset($faskes['image_url']) && $faskes['image_url'] ? $faskes['image
         </main>
     </div>
 
-    <!-- Mobile Bottom Nav -->
+        <!-- Mobile Bottom Nav -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center pb-safe pt-2 pb-2 z-50 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <a href="index.php" class="flex flex-col items-center p-2 text-slate-400 hover:text-primary transition-colors">
+        <a href="index.php" class="flex flex-col items-center p-2 <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'text-primary' : 'text-slate-400 hover:text-primary transition-colors'; ?>">
             <i class="fa-solid fa-house text-xl mb-1"></i>
             <span class="text-[10px] font-semibold">Beranda</span>
         </a>
-        <a href="find.php" class="flex flex-col items-center p-2 text-primary">
-            <i class="fa-solid fa-magnifying-glass text-xl mb-1"></i>
+        <a href="find.php" class="flex flex-col items-center p-2 <?php echo basename($_SERVER['PHP_SELF']) == 'find.php' ? 'text-primary' : 'text-slate-400 hover:text-primary transition-colors'; ?>">
+            <i class="fa-solid fa-stethoscope text-xl mb-1"></i>
             <span class="text-[10px] font-semibold">Cari</span>
         </a>
-        <div class="relative -top-5">
-            <a href="find.php" class="flex items-center justify-center w-14 h-14 bg-primary text-white rounded-full shadow-lg hover:bg-primaryDark transition-colors">
-                <i class="fa-solid fa-plus text-2xl"></i>
-            </a>
-        </div>
-        <a href="jadwal.php" class="flex flex-col items-center p-2 text-slate-400 hover:text-primary transition-colors">
+        <a href="jadwal.php" class="flex flex-col items-center p-2 <?php echo basename($_SERVER['PHP_SELF']) == 'jadwal.php' ? 'text-primary' : 'text-slate-400 hover:text-primary transition-colors'; ?>">
             <i class="fa-regular fa-calendar-check text-xl mb-1"></i>
             <span class="text-[10px] font-semibold">Jadwal</span>
         </a>
-        <a href="profile.php" class="flex flex-col items-center p-2 text-slate-400 hover:text-primary transition-colors">
+        <a href="tarif.php" class="flex flex-col items-center p-2 <?php echo basename($_SERVER['PHP_SELF']) == 'tarif.php' ? 'text-primary' : 'text-slate-400 hover:text-primary transition-colors'; ?>">
+            <i class="fa-solid fa-receipt text-xl mb-1"></i>
+            <span class="text-[10px] font-semibold">Tarif</span>
+        </a>
+        <a href="profile.php" class="flex flex-col items-center p-2 <?php echo basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'text-primary' : 'text-slate-400 hover:text-primary transition-colors'; ?>">
             <i class="fa-regular fa-user text-xl mb-1"></i>
             <span class="text-[10px] font-semibold">Profil</span>
         </a>
